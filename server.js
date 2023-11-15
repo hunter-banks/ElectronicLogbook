@@ -13,7 +13,6 @@ const db = mysql.createConnection({
   database: 'logbook', 
 });
 
-// Connect to MySQL
 db.connect(err => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -32,10 +31,7 @@ app.use(session({
 }));
 
 var jsonParser = bodyParser.json()
- 
-// create application/x-www-form-urlencoded parser
-// var urlencodedParser = bodyParser.urlencoded({ extended: false })
-// Routes
+
 app.get('/', (req, res) => {
   res.render('login');
 });
@@ -76,10 +72,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-// Set up EJS as the view engine
 app.set('view engine', 'ejs');
-
-// ... (Views code remains the same)
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
