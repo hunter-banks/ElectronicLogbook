@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pilot Logbook</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>{{ title }}</h1>
+    </header>
+    <main>
+      <h2>Flight Log</h2>
+      <ul>
+        <li v-for="flight in flights" :key="flight.id">
+          <span>{{ flight.pilot_name }} - {{ flight.aircraft_type }} - {{ flight.departure_airport }} to {{ flight.arrival_airport }} - {{ flight.flight_date }}</span>
+        </li>
+      </ul>
+      <form @submit.prevent="addFlight">
+        <label for="pilot-name">Pilot Name:</label>
+        <input v-model="newFlight.pilot_name" type="text" id="pilot-name" name="pilot_name" required>
+        <!-- Add more form fields as needed -->
+        <button type="submit">Add Flight</button>
+      </form>
+    </main>
+    <footer>
+      <p>&copy; 2023 Pilot Logbook</p>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
