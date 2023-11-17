@@ -20,6 +20,7 @@ db.connect(err => {
     console.log('Connected to MySQL');
   }
 });
+app.use(express.static('public'));
 app.use(
   bodyParser.urlencoded({
   extended: true
@@ -81,10 +82,9 @@ app.post('/register', (req, res) => {
       return res.sendStatus(500);
     }
 
-    res.send(`User ${username} registered successfully!`);
+    res.redirect('/');
   });
 });
-app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 
