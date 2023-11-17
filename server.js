@@ -46,11 +46,24 @@ app.post('/login', jsonParser, (req, res) => {
     }
     if (results.length == 0) {
       res.send('Invalid username or password');
+      
     }
     else {
       req.session.loggedin = true;
       req.session.username = username;
-      res.render('welcome', {data: username})
+      db.query('SELECT * FROM Entry WHERE user = ? ORDER BY date DESC', [username], (err, entries) => {
+        if (err) {
+          console.error(err);
+          return res.sendStatus(500);
+        }
+        db.query('SELECT id FROM Aircraft ORDER BY make, model', (err, types) => {
+          if (err) {
+            console.error(err);
+            return res.sendStatus(500);
+          }
+          res.render('welcome', {user: username, entry: entries, AircraftTypes: types})
+        });
+      });
     }
   });
 });
@@ -71,6 +84,7 @@ app.post('/register', (req, res) => {
     res.send(`User ${username} registered successfully!`);
   });
 });
+app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
 

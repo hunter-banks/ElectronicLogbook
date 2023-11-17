@@ -1,22 +1,186 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pilot Logbook</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Pilot Logbook Dashboard</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    main.dashboard {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px;
+    }
+
+    section {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin: 10px;
+      width: 30%;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 8px;
+    }
+
+    input,
+    select,
+    button {
+      margin-bottom: 16px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    ul li {
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      padding: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+  </style>
 </head>
+
 <body>
+
   <header>
-    <h1>Welcome <%=data %>! </h1>
+    <h1>Welcome, <%= user %>!</h1>
   </header>
-  <main>
-    <p>Welcome to the electric logbook for pilots.</p>
-    <!-- Add more content as needed -->
+  <main class="dashboard">
+    <section class="add-entry">
+      <h2>Add Flight Entry</h2>
+      <form action="/add-entry" method="post">
+        <input type="hidden" value=<%= user %>>
+        <label for="aircraftType">Aircraft Type:</label>
+        <select id="aircraftType" name="aircraftType" required>
+          <% for (const type of AircraftTypes) { %>
+            <option value="<%= type.id %>"><%= type.id %></option>
+          <% } %>
+        </select>
+        <br>
+        <label for="tailNumber">Tail Number:</label>
+        <input type="text" id="tailNumber" name="tailNumber" required>
+        <br>
+        <label for="entryDate">Date:</label>
+        <input type="date" id="entryDate" name="entryDate" required>
+        <br>
+        <label for="origin">Origin:</label>
+        <input type="text" id="origin" name="origin" required>
+        <br>
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" name="odestinationrigin" required>
+        <button type="submit">Add Entry</button>
+      </form>
+    </section>
+
+    <section class="add-aircraft">
+      <h2>Add Aircraft Model</h2>
+      <form action="/add-aircraft" method="post">
+        <label for="make">Make:</label>
+        <input type="text" id="make" name="make" required>
+        <br>
+        <label for="model">Model:</label>
+        <input type="text" id="model" name="model" required>
+        <br>
+        <label for="type">Type:</label>
+        <select id="type" name="type" required>
+        </select>
+        <br>
+        <button type="submit">Add Aircraft</button>
+      </form>
+    </section>
+
+    <section class="view-entries">
+      <h2>View Recent Entries</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Aircraft Type</th>
+            <th>Tail Number</th>
+            <th>Origin</th>
+            <th>Dest</th>
+            <th>Total Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (const ent of entry) { %>
+            <tr>
+              <td><%= formatDate(ent.date) %></td>
+              <td><%= ent.aircraft_type %></td>
+              <td><%= ent.tail_num %></td>
+              <td><%= ent.origin %></td>
+              <td><%= ent.dest %></td>
+              <td><%= ent.total_time %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </section>
   </main>
-  <footer>
-    <p>&copy; 2023 Pilot Logbook</p>
-  </footer>
 </body>
+<% 
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
+  return formattedDate;
+}
+%>
 </html>
+

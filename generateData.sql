@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS Aircraft;
 DROP TABLE IF EXISTS Type;
 DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Entry;
 
 CREATE TABLE Type (
   id VARCHAR(20) PRIMARY KEY,
@@ -19,6 +20,19 @@ CREATE TABLE Aircraft (
 CREATE TABLE User (
     username VARCHAR(255) PRIMARY KEY,
     password_hash VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE Entry (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user VARCHAR(255) NOT NULL,
+  date DATE NOT NULL,
+  aircraft_type VARCHAR(20) NOT NULL,
+  tail_num VARCHAR(20) NOT NULL,
+  origin VARCHAR(10) NOT NULL,
+  dest VARCHAR(10) NOT NULL,
+  total_time DECIMAL(4,2) NOT NULL,
+
+  FOREIGN KEY (user) REFERENCES User(username)
 );
 
 INSERT INTO Type VALUES
@@ -40,3 +54,8 @@ INSERT INTO Aircraft VALUES
 
 INSERT INTO User VALUES 
 ('hbanks', SHA2('password', 256));
+
+INSERT INTO Entry (user, date, aircraft_type, tail_num, origin, dest, total_time) VALUES 
+('hbanks', '2023-04-20', 'DHC-3T', 'N90422', 'S60', 'FRD', 1.5),
+('hbanks', '2023-04-20', 'DHC-3T', 'N90422', 'FRD', 'S60', 1.5),
+('hbanks', '2023-04-21', 'DHC-3T', 'N87KA', 'S60', 'FRD', 1.5);
