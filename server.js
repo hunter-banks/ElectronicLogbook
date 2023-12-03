@@ -4,14 +4,10 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
 const port = 3000;
+let config = require('./config.js')
 
 // Create a MySQL connection
-const db = mysql.createConnection({
-  host: 'localhost',  
-  user: 'root', 
-  password: 'Hb1013515', 
-  database: 'logbook', 
-});
+const db = mysql.createConnection(config);
 
 db.connect(err => {
   if (err) {
@@ -46,7 +42,8 @@ app.post('/login', jsonParser, (req, res) => {
       return res.sendStatus(500);
     }
     if (results.length == 0) {
-      res.send('Invalid username or password');
+      // res.send('<script>alert("hello")</script>');
+      res.redirect('/');
       
     }
     else {
