@@ -49,7 +49,7 @@ app.post('/login', jsonParser, (req, res) => {
     else {
       req.session.loggedin = true;
       req.session.username = username;
-      db.query('SELECT * FROM Entry WHERE user = ? ORDER BY date DESC', [username], (err, entries) => {
+      db.query('SELECT * FROM Entry WHERE user = ? ORDER BY date DESC LIMIT 10', [username], (err, entries) => {
         if (err) {
           console.error(err);
           return res.sendStatus(500);
@@ -59,12 +59,57 @@ app.post('/login', jsonParser, (req, res) => {
             console.error(err);
             return res.sendStatus(500);
           }
-          res.render('welcome', {user: username, entry: entries, AircraftTypes: types})
+          db.query('SELECT id FROM Type ORDER BY id DESC', (err, typeInfo) => {
+            if (err) {
+              console.error(err);
+              return res.sendStatus(500);
+            }4e345234
+            res.render('welcome', {user: {username, password}, entry: entries, AircraftTypes: types, TypeInfo: typeInfo})
+          });
+          
         });
       });
     }
   });
 });
+app.post('/add-entry', (req, res) => {
+  db.query('INSERT INTO Entry (user, date, aircraft_type, tail_num, origin, dest, total_time) VALUES (?, ?, ?, ?, ?, ?, ?)', [req.body.username, req.body.entryDate, req.body.aircraftType, req.body.tailNumber, req.body.origin, req.body.destination, req.body.time], (err) => {
+    if (err) {
+      console.error(err);
+      return res.sendStatus(500);
+    }
+    const form = `
+      <form id="loginForm" action="/login" method="post">
+        <input type="hidden" name="username" value="${req.body.username}">
+        <input type="hidden" name="password" value="${req.body.password}">
+      </form>
+      <script>
+        document.getElementById('loginForm').submit();
+      </script>
+    `;
+    res.send(form);
+  });
+});
+
+app.post('/add-aircraft', (req, res) => {
+  db.query('INSERT INTO Aircraft VALUES (?, ?, ?, ?)', [req.body.model, req.body.make, req.body.name, req.body.type], (err) => {
+    if (err) {
+      console.error(err);
+      return res.sendStatus(500);
+    }
+    const form = `
+      <form id="loginForm" action="/login" method="post">
+        <input type="hidden" name="username" value="${req.body.username}">
+        <input type="hidden" name="password" value="${req.body.password}">
+      </form>
+      <script>
+        document.getElementById('loginForm').submit();
+      </script>
+    `;
+    res.send(form);
+  });
+});
+
 
 app.get('/register', (req, res) => {
   res.render('register');
@@ -78,8 +123,7 @@ app.post('/register', (req, res) => {
       console.error(err);
       return res.sendStatus(500);
     }
-
-    res.redirect('/');
+    res.redirect('/')
   });
 });
 

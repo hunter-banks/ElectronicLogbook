@@ -10,13 +10,14 @@
 <body>
 
   <header>
-    <h1>Welcome, <%= user %>!</h1>
+    <h1>Welcome, <%= user.username %>!</h1>
   </header>
   <main class="dashboard">
     <section class="add-entry">
       <h2>Add Flight Entry</h2>
       <form action="/add-entry" method="post">
-        <input type="hidden" value=<%= user %>>
+        <input type="hidden" id="username" name="username" value=<%= user.username %>>
+        <input type="hidden" id="password" name="password" value=<%= user.password %>>
         <label for="aircraftType">Aircraft Type:</label>
         <select id="aircraftType" name="aircraftType" required>
           <% for (const type of AircraftTypes) { %>
@@ -34,7 +35,10 @@
         <input type="text" id="origin" name="origin" required>
         <br>
         <label for="destination">Destination:</label>
-        <input type="text" id="destination" name="odestinationrigin" required>
+        <input type="text" id="destination" name="destination" required>
+        <br>
+        <label for="time">Total Time:</label>
+        <input id="time" name="time" pattern="^[0-9]+(\.[0-9]+)?$" title="Please enter a valid decimal number"required>
         <button type="submit">Add Entry</button>
       </form>
     </section>
@@ -42,14 +46,22 @@
     <section class="add-aircraft">
       <h2>Add Aircraft Model</h2>
       <form action="/add-aircraft" method="post">
+        <input type="hidden" id="username" name="username" value=<%= user.username %>>
+        <input type="hidden" id="password" name="password" value=<%= user.password %>>
         <label for="make">Make:</label>
         <input type="text" id="make" name="make" required>
         <br>
         <label for="model">Model:</label>
         <input type="text" id="model" name="model" required>
         <br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
         <label for="type">Type:</label>
         <select id="type" name="type" required>
+          <% for (const type of TypeInfo) { %>
+            <option value="<%= type.id %>"><%= type.id %></option>
+          <% } %>
         </select>
         <br>
         <button type="submit">Add Aircraft</button>
