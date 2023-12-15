@@ -9,10 +9,13 @@
 
 <body>
 
+
   <header>
     <h1>Welcome, <%= user.username %>!</h1>
+    <h2>Total Time: <span id="totalTimeValue"></span> Hours</h2>
   </header>
   <main class="dashboard">
+    
     <section class="add-entry">
       <h2>Add Flight Entry</h2>
       <form action="/add-entry" method="post">
@@ -38,8 +41,9 @@
         <input type="text" id="destination" name="destination" required>
         <br>
         <label for="time">Total Time:</label>
-        <input id="time" name="time" pattern="^[0-9]+(\.[0-9]+)?$" title="Please enter a valid decimal number"required>
+        <input id="time" name="time" pattern="^[0-9]+(\.[0-9]+)?$" title="Please enter a valid decimal number" required>
         <button type="submit">Add Entry</button>
+
       </form>
     </section>
 
@@ -82,7 +86,13 @@
           </tr>
         </thead>
         <tbody>
-          <% for (const ent of entry) { %>
+          <%
+            let count = 0
+            for (const ent of entry) { 
+              count++
+              if (count > 8) {
+                break
+              } %>
             <tr>
               <td><%= formatDate(ent.date) %></td>
               <td><%= ent.aircraft_type %></td>
@@ -95,9 +105,63 @@
         </tbody>
       </table>
     </section>
+    <section class="lookup-entries">
+    <h2>Lookup Entries</h2>
+
+    <form action="export-type" method="post">
+      <input type="hidden" id="username" name="username" value= <%= user.username %> >
+      <label for="aircraftTypeDropdown">Aircraft Type:</label>
+      <select id="aircraftTypeDropdown" name="aircraftTypeDropdown" required>
+        <% for (const type of AircraftTypes) { %>
+          <option value="<%= type.id %>"><%= type.id %></option>
+        <% } %>
+      </select>
+      <button type="submit">Lookup Type</button>
+    </form>
+
+    <form action="export-model" method="post">
+      <input type="hidden" id="username" name="username" value=<%= user.username %> >
+      <label for="modelTypeDropdown">Model Type:</label>
+      <select id="modelTypeDropdown" name="modelTypeDropdown" required>
+        <% for (const type of TypeInfo) { %>
+          <option value="<%= type.id %>"><%= type.id %></option>
+        <% } %>
+      </select>
+      <button type="submit">Lookup Model</button>
+    </form>
+    <form action="export-csv" method="post">
+      <input type="hidden" id="username" name="username" value=<%= user.username %> >
+      <label>Export All Entries as a CSV</label>
+      <button type="submit">Export Entries</button>
+    </form>
+
+    <div id="lookupResults"></div>
+  </section>
   </main>
 </body>
-<% 
+<form action="/" method="get">
+      <button type="submit">Logout</button>
+    </form>
+<script>
+  function getTotalTime() {
+    let value = 0.0
+    <% for (const ent of entry) { %>
+      
+            value += <%= ent.total_time %>
+          <% } %>
+      return value;
+    }
+    // Get the h2 element
+    var h2Element = document.querySelector('h2');
+
+    // Call the getTotalTime function and set the result in the <span> element
+    var totalTimeValueElement = document.getElementById('totalTimeValue');
+    totalTimeValueElement.textContent = getTotalTime();
+  </script>
+
+
+<%
+
 function formatDate(dateString) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);

@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const json2csv = require('json2csv').Parser;
 const app = express();
 const port = 3000;
 let config = require('./config.js')
@@ -49,7 +50,7 @@ app.post('/login', jsonParser, (req, res) => {
     else {
       req.session.loggedin = true;
       req.session.username = username;
-      db.query('SELECT * FROM Entry WHERE user = ? ORDER BY date DESC LIMIT 10', [username], (err, entries) => {
+      db.query('SELECT * FROM Entry WHERE user = ? ORDER BY date DESC', [username], (err, entries) => {
         if (err) {
           console.error(err);
           return res.sendStatus(500);
@@ -63,7 +64,7 @@ app.post('/login', jsonParser, (req, res) => {
             if (err) {
               console.error(err);
               return res.sendStatus(500);
-            }4e345234
+            }
             res.render('welcome', {user: {username, password}, entry: entries, AircraftTypes: types, TypeInfo: typeInfo})
           });
           
@@ -107,6 +108,57 @@ app.post('/add-aircraft', (req, res) => {
       </script>
     `;
     res.send(form);
+  });
+});
+
+app.post('/export-csv', (req, res) => {
+  db.query('SELECT Entry.date, Entry.aircraft_type, Entry.tail_num, Entry.origin, Entry.dest, Entry.total_time, Aircraft.type_id FROM Entry JOIN Aircraft ON Entry.aircraft_type = Aircraft.id WHERE user=?', [req.body.username], (err, results) => {
+    if (results && results.length > 0) {
+      const json2csvParser = new json2csv();
+      const csv = json2csvParser.parse(results);
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=logbook.csv');
+
+      res.status(200).send(csv);
+    }
+    else {
+      res.status(404).send('No data found for the specified criteria.');
+    }
+  });
+});
+
+app.post('/export-model', (req, res) => {
+  db.query('SELECT Entry.date, Entry.aircraft_type, Entry.tail_num, Entry.origin, Entry.dest, Entry.total_time, Aircraft.type_id FROM Entry JOIN Aircraft ON Entry.aircraft_type = Aircraft.id WHERE user=? AND Aircraft.type_id=?', [req.body.username, req.body.modelTypeDropdown], (err, results) => {
+    if (results && results.length > 0) {
+      const json2csvParser = new json2csv();
+      const csv = json2csvParser.parse(results);
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=model_info.csv');
+
+      res.status(200).send(csv);
+    }
+    else {
+      res.status(404).send('No data found for the specified criteria.');
+    }
+  });
+});
+
+app.post('/export-type', (req, res) => {
+  db.query('SELECT Entry.date, Entry.aircraft_type, Entry.tail_num, Entry.origin, Entry.dest, Entry.total_time, Aircraft.type_id FROM Entry JOIN Aircraft ON Entry.aircraft_type = Aircraft.id WHERE user=? AND Entry.aircraft_type=?', [req.body.username, req.body.aircraftTypeDropdown], (err, results) => {
+    if (results && results.length > 0) {
+      const json2csvParser = new json2csv();
+      const csv = json2csvParser.parse(results);
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=type_info.csv');
+
+      res.status(200).send(csv);
+    }
+    else {
+      res.status(404).send('No data found for the specified criteria.');
+    }
   });
 });
 

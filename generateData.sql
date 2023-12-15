@@ -1,7 +1,7 @@
+DROP TABLE IF EXISTS Entry;
+DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Aircraft;
 DROP TABLE IF EXISTS Type;
-DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS Entry;
 
 CREATE TABLE Type (
   id VARCHAR(20) PRIMARY KEY,
@@ -42,10 +42,10 @@ INSERT INTO Type VALUES
 ('AMES', 'Airplane Multi Engine Sea');
 
 INSERT INTO Aircraft VALUES
-('CE-172', 'Cessna', '172', 'ASEL'),
-('CE-172', 'Cessna', '172', 'ASES'),
-('CE-180', 'Cessna', '180', 'ASEL'),
-('CE-180', 'Cessna', '180', 'ASES'),
+('CE-172 Land', 'Cessna', '172', 'ASEL'),
+('CE-172 Sea', 'Cessna', '172', 'ASES'),
+('CE-180 Land', 'Cessna', '180', 'ASEL'),
+('CE-180 Sea', 'Cessna', '180', 'ASES'),
 ('DHC-3T', 'de Havilland', 'Turbine Otter', 'ASES'),
 ('DHC-2', 'de Havilland', 'Beaver', 'ASES'),
 ('DHC-2T', 'de Havilland', 'Turbine-Beaver', 'ASES'),
